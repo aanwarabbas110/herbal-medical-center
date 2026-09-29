@@ -3,6 +3,7 @@ import io
 import json
 import os
 import requests
+import numpy as np
 from PIL import Image
 import streamlit as st
 import torch
@@ -120,7 +121,7 @@ st.markdown(
 st.sidebar.markdown("### 🏥 Center Information")
 st.sidebar.markdown("**Lead Developer:** Anwar Ali")
 st.sidebar.markdown("**Department:** Botanical Machine Learning & AI Health")
-st.sidebar.caption("v3.5 | Streamlit Cloud Ready Edition")
+st.sidebar.caption("v3.6 | Stable Diagnostic Pipeline")
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🌐 Language & Settings")
@@ -173,7 +174,7 @@ elif language_choice == "English":
   header_subtitle = (
       "AI-Powered Botanical Diagnostics & Clinical Guidance System"
   )
-  doctor_tag = "⚕️ Chief Director: <b>Anwar Ali</b>"
+  doctor_tag = "⚕️️ Chief Director: <b>Anwar Ali</b>"
 else:
   header_title = "🌿 ANWAR ALI HERBAL MEDICAL CENTER"
   header_subtitle = (
@@ -264,11 +265,10 @@ model, device, model_loaded = (
     load_model(len(class_names)) if class_names else (None, "cpu", False)
 )
 
-# --- Updated Image Transforms Pipeline for PyTorch 2.2+ Compatibility ---
+# --- Standard Image Transforms Pipeline ---
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
-    transforms.PILToTensor(),
-    transforms.ConvertImageDtype(torch.float),
+    transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
@@ -296,16 +296,21 @@ with tab1:
 
   if uploaded_file is not None:
     col1, col2 = st.columns([1, 1])
-    image = Image.open(uploaded_file).convert("RGB")
+    raw_image = Image.open(uploaded_file).convert("RGB")
 
     with col1:
       st.image(
-          image, caption="Submitted Botanical Specimen", use_container_width=True
+          raw_image,
+          caption="Submitted Botanical Specimen",
+          use_container_width=True,
       )
 
     if model_loaded:
       try:
-        img_tensor = transform(image).unsqueeze(0).to(device)
+        # NumPy Array conversion fixes uint8 dtype bug in PyTorch transform
+        img_np = np.array(raw_image)
+        img_tensor = transform(Image.fromarray(img_np)).unsqueeze(0).to(device)
+
         with torch.no_grad():
           outputs = model(img_tensor)
           probs = torch.softmax(outputs, dim=1)
