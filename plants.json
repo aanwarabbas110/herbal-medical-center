@@ -1,0 +1,76 @@
+{
+  "medicinal_plants": [
+    {
+      "id": 1,
+      "name": "ada",
+      "urdu_name": "Adrak",
+      "ilaaj": "Zukam, khansi, galay ki kharash aur pait ke gas ke liye."
+    },
+    {
+      "id": 2,
+      "name": "alovera",
+      "urdu_name": "Aloe Vera",
+      "ilaaj": "Skin ki hydration, jalne ke zakhm aur face glow ke liye."
+    },
+    {
+      "id": 3,
+      "name": "bonjui",
+      "urdu_name": "Bonjui",
+      "ilaaj": "Traditional herbal remedies aur immunity ke liye."
+    },
+    {
+      "id": 4,
+      "name": "dirghaiu shak",
+      "urdu_name": "Dirghaiu Shak",
+      "ilaaj": "General body strength aur wellness ke liye."
+    },
+    {
+      "id": 5,
+      "name": "durba",
+      "urdu_name": "Durba Grass",
+      "ilaaj": "Khoon saaf karne aur zakhm theek karne ke liye."
+    },
+    {
+      "id": 6,
+      "name": "gada",
+      "urdu_name": "Gada Plant",
+      "ilaaj": "Local herbal treatment ke liye."
+    },
+    {
+      "id": 7,
+      "name": "joba",
+      "urdu_name": "Joba (Hibiscus)",
+      "ilaaj": "Baalon ki mazbooti, hair fall rokne aur skin ke liye."
+    },
+    {
+      "id": 8,
+      "name": "kamini",
+      "urdu_name": "Kamini",
+      "ilaaj": "Traditional medicinal uses aur skin care ke liye."
+    },
+    {
+      "id": 9,
+      "name": "refuzee",
+      "urdu_name": "Refuzee",
+      "ilaaj": "Herbal leaf properties ke mutabiq."
+    },
+    {
+      "id": 10,
+      "name": "shojna",
+      "urdu_name": "Shojna (Moringa)",
+      "ilaaj": "Taqat, joint pain aur vitamins ke liye bohot faida mand hai."
+    },
+    {
+      "id": 11,
+      "name": "thankuni",
+      "urdu_name": "Thankuni (Centella)",
+      "ilaaj": "Dimagh ki taqat, memory tez karne aur pait ke masail ke liye."
+    },
+    {
+      "id": 12,
+      "name": "tulshi",
+      "urdu_name": "Tulsi",
+      "ilaaj": "Zukam, fever, immunity barhane aur respiratory health ke liye."
+    }
+  ]
+}
