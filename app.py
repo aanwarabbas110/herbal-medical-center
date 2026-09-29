@@ -3,7 +3,6 @@ import io
 import json
 import os
 import requests
-import numpy as np
 from PIL import Image
 import streamlit as st
 import torch
@@ -121,7 +120,7 @@ st.markdown(
 st.sidebar.markdown("### 🏥 Center Information")
 st.sidebar.markdown("**Lead Developer:** Anwar Ali")
 st.sidebar.markdown("**Department:** Botanical Machine Learning & AI Health")
-st.sidebar.caption("v3.6 | Stable Diagnostic Pipeline")
+st.sidebar.caption("v3.7 | Cloud Robust Pipeline")
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🌐 Language & Settings")
@@ -174,7 +173,7 @@ elif language_choice == "English":
   header_subtitle = (
       "AI-Powered Botanical Diagnostics & Clinical Guidance System"
   )
-  doctor_tag = "⚕️️ Chief Director: <b>Anwar Ali</b>"
+  doctor_tag = "⚕ Chief Director: <b>Anwar Ali</b>"
 else:
   header_title = "🌿 ANWAR ALI HERBAL MEDICAL CENTER"
   header_subtitle = (
@@ -265,7 +264,7 @@ model, device, model_loaded = (
     load_model(len(class_names)) if class_names else (None, "cpu", False)
 )
 
-# --- Standard Image Transforms Pipeline ---
+# Pure Torch transforms (No NumPy dependency required)
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.ToTensor(),
@@ -296,6 +295,8 @@ with tab1:
 
   if uploaded_file is not None:
     col1, col2 = st.columns([1, 1])
+
+    # Open image directly as PIL RGB Image
     raw_image = Image.open(uploaded_file).convert("RGB")
 
     with col1:
@@ -307,9 +308,8 @@ with tab1:
 
     if model_loaded:
       try:
-        # NumPy Array conversion fixes uint8 dtype bug in PyTorch transform
-        img_np = np.array(raw_image)
-        img_tensor = transform(Image.fromarray(img_np)).unsqueeze(0).to(device)
+        # Direct Transformation from PIL Image to PyTorch Tensor
+        img_tensor = transform(raw_image).unsqueeze(0).to(device)
 
         with torch.no_grad():
           outputs = model(img_tensor)
