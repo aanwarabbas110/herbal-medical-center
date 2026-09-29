@@ -116,11 +116,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- Sidebar Configuration (Center Information Top Pe Shamil Hai) ---
+# --- Sidebar Configuration (Center Information Top Par) ---
 st.sidebar.markdown("### 🏥 Center Information")
 st.sidebar.markdown("**Lead Developer:** Anwar Ali")
 st.sidebar.markdown("**Department:** Botanical Machine Learning & AI Health")
-st.sidebar.caption("v3.4 | Text & Order Clinical System")
+st.sidebar.caption("v3.5 | Streamlit Cloud Ready Edition")
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🌐 Language & Settings")
@@ -264,9 +264,11 @@ model, device, model_loaded = (
     load_model(len(class_names)) if class_names else (None, "cpu", False)
 )
 
+# --- Updated Image Transforms Pipeline for PyTorch 2.2+ Compatibility ---
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
-    transforms.ToTensor(),
+    transforms.PILToTensor(),
+    transforms.ConvertImageDtype(torch.float),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
@@ -302,26 +304,29 @@ with tab1:
       )
 
     if model_loaded:
-      img_tensor = transform(image).unsqueeze(0).to(device)
-      with torch.no_grad():
-        outputs = model(img_tensor)
-        probs = torch.softmax(outputs, dim=1)
-        top_prob, top_idx = torch.max(probs, dim=1)
+      try:
+        img_tensor = transform(image).unsqueeze(0).to(device)
+        with torch.no_grad():
+          outputs = model(img_tensor)
+          probs = torch.softmax(outputs, dim=1)
+          top_prob, top_idx = torch.max(probs, dim=1)
 
-      predicted_plant = class_names[top_idx.item()]
-      confidence = top_prob.item() * 100
+        predicted_plant = class_names[top_idx.item()]
+        confidence = top_prob.item() * 100
 
-      with col2:
-        st.markdown(
-            f"""
-                    <div class="diagnosis-card">
-                        <div class="diagnosis-title">Diagnostic Identification</div>
-                        <div class="diagnosis-value">{predicted_plant.upper()}</div>
-                        <p style="margin-top:10px; color:#555;">Classification Confidence: <b>{confidence:.1f}%</b></p>
-                    </div>
-                """,
-            unsafe_allow_html=True,
-        )
+        with col2:
+          st.markdown(
+              f"""
+                      <div class="diagnosis-card">
+                          <div class="diagnosis-title">Diagnostic Identification</div>
+                          <div class="diagnosis-value">{predicted_plant.upper()}</div>
+                          <p style="margin-top:10px; color:#555;">Classification Confidence: <b>{confidence:.1f}%</b></p>
+                      </div>
+                  """,
+              unsafe_allow_html=True,
+          )
+      except Exception as e:
+        st.error(f"Image Preprocessing Failure: {str(e)}")
 
   if openrouter_api_key:
     st.markdown("---")
@@ -574,13 +579,13 @@ with tab5:
             f"Sent from AI Diagnostics Portal"
         )
 
-        whatsapp_number = "923000000000"  # Apna WhatsApp number yahan set karein
+        whatsapp_number = "923065440740"  # Pre-configured contact number
         encoded_msg = requests.utils.quote(full_message)
         whatsapp_url = (
             f"https://wa.me/{whatsapp_number}?text={encoded_msg}"
         )
 
-        st.success("Tafseelat tayar hain! Neeche दिए گئے button par click karke WhatsApp open karein.")
+        st.success("Tafseelat tayar hain! Neeche diye gaye button par click karke WhatsApp open karein.")
         st.markdown(
             f"""
             <a href="{whatsapp_url}" target="_blank" style="text-decoration:none;">
