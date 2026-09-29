@@ -120,7 +120,7 @@ st.markdown(
 st.sidebar.markdown("### 🏥 Center Information")
 st.sidebar.markdown("**Lead Developer:** Anwar Ali")
 st.sidebar.markdown("**Department:** Botanical Machine Learning & AI Health")
-st.sidebar.caption("v3.7 | Cloud Robust Pipeline")
+st.sidebar.caption("v3.8 | Zero-NumPy Pure PyTorch Pipeline")
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 🌐 Language & Settings")
@@ -264,12 +264,22 @@ model, device, model_loaded = (
     load_model(len(class_names)) if class_names else (None, "cpu", False)
 )
 
-# Pure Torch transforms (No NumPy dependency required)
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-])
+
+# Helper: Pure PyTorch Image Transformation without NumPy
+def preprocess_pil_image(pil_img):
+  pil_img = pil_img.resize((224, 224))
+  img_bytes = pil_img.tobytes()
+  tensor = (
+      torch.frombuffer(img_bytes, dtype=torch.uint8)
+      .reshape(224, 224, 3)
+      .permute(2, 0, 1)
+  )
+  tensor = tensor.float() / 255.0
+  normalize = transforms.Normalize(
+      mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+  )
+  return normalize(tensor)
+
 
 predicted_plant = None
 
@@ -295,8 +305,6 @@ with tab1:
 
   if uploaded_file is not None:
     col1, col2 = st.columns([1, 1])
-
-    # Open image directly as PIL RGB Image
     raw_image = Image.open(uploaded_file).convert("RGB")
 
     with col1:
@@ -308,8 +316,8 @@ with tab1:
 
     if model_loaded:
       try:
-        # Direct Transformation from PIL Image to PyTorch Tensor
-        img_tensor = transform(raw_image).unsqueeze(0).to(device)
+        # Custom Pure-PyTorch Tensor Preprocessing
+        img_tensor = preprocess_pil_image(raw_image).unsqueeze(0).to(device)
 
         with torch.no_grad():
           outputs = model(img_tensor)
